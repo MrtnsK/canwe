@@ -1,5 +1,5 @@
 name: CanWe
-version: "1.0.1"
+version: "1.0.2"
 main: fr.kevin.canwe.CanWePlugin
 api-version: "1.21"
 description: Daily Modrinth compatibility checker for Paper servers
