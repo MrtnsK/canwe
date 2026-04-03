@@ -1,0 +1,17 @@
+name: CanWe
+version: "1.0.0"
+main: fr.kevin.canwe.CanWePlugin
+api-version: "1.21"
+description: Daily Modrinth compatibility checker for Paper servers
+authors: [kevin]
+
+commands:
+  canwe:
+    description: CanWe plugin commands
+    usage: /canwe <check|reload>
+    permission: canwe.admin
+
+permissions:
+  canwe.admin:
+    description: Access to CanWe admin commands
+    default: op

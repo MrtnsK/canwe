@@ -1,0 +1,19 @@
+# CanWe - Modrinth Compatibility Checker
+# Checks every morning at 8:00 AM if your plugins are available for the target version.
+
+# Set to false to disable the daily check entirely
+enabled: true
+
+modrinth:
+  # Your Modrinth API token (required for API access)
+  # Generate one at: https://modrinth.com/settings/account
+  api-token: ""
+
+  # The Minecraft version to check compatibility for
+  target-version: "26.1"
+
+# Plugins to exclude from the check (e.g. custom plugins not on Modrinth)
+# Use the exact plugin name as it appears in /plugins
+ignored-plugins: []
+#  - MyCustomPlugin
+#  - AnotherInternalPlugin
