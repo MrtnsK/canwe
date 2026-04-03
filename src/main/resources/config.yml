@@ -1,8 +1,11 @@
 # CanWe - Modrinth Compatibility Checker
-# Checks every morning at 8:00 AM if your plugins are available for the target version.
+# Checks every day at the configured hour if your plugins are available for the target version.
 
 # Set to false to disable the daily check entirely
 enabled: true
+
+# Hour of the day to run the check (0-23, server timezone)
+check-hour: 8
 
 modrinth:
   # Your Modrinth API token (required for API access)

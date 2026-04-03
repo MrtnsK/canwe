@@ -18,7 +18,6 @@ import java.util.logging.Level;
 public class DailyCheckTask {
 
     private static final long TICKS_PER_DAY = 24L * 60 * 60 * 20;
-    private static final int CHECK_HOUR = 8;
 
     private final CanWePlugin plugin;
     private BukkitTask task;
@@ -28,9 +27,10 @@ public class DailyCheckTask {
     }
 
     public void schedule() {
-        long delayTicks = computeTicksUntilNextCheck();
+        int checkHour = plugin.getPluginConfig().getCheckHour();
+        long delayTicks = computeTicksUntilNextCheck(checkHour);
         plugin.getLogger().info("Next compatibility check scheduled in "
-                + (delayTicks / 20 / 60) + " minutes (at " + CHECK_HOUR + ":00).");
+                + (delayTicks / 20 / 60) + " minutes (at " + checkHour + ":00).");
 
         task = new BukkitRunnable() {
             @Override
@@ -51,9 +51,9 @@ public class DailyCheckTask {
         runCheck();
     }
 
-    private long computeTicksUntilNextCheck() {
+    private long computeTicksUntilNextCheck(int checkHour) {
         ZonedDateTime now = ZonedDateTime.now(ZoneId.systemDefault());
-        ZonedDateTime next = now.toLocalDate().atTime(CHECK_HOUR, 0).atZone(ZoneId.systemDefault());
+        ZonedDateTime next = now.toLocalDate().atTime(checkHour, 0).atZone(ZoneId.systemDefault());
         if (!now.isBefore(next)) {
             next = next.plusDays(1);
         }
