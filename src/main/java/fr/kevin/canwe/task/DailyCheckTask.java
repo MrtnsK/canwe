@@ -10,6 +10,8 @@ import org.bukkit.scheduler.BukkitTask;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.time.temporal.ChronoUnit;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
 
@@ -75,48 +77,42 @@ public class DailyCheckTask {
         ModrinthClient client = plugin.getModrinthClient();
         MappingManager mappingManager = plugin.getMappingManager();
 
-        plugin.getLogger().info("[CanWe] Starting daily compatibility check for version " + targetVersion + "...");
-
         Map<String, String> mappings = mappingManager.getAllMappings();
 
-        int compatible = 0;
-        int incompatible = 0;
-        int ignored = 0;
+        List<String> compatibleList  = new ArrayList<>();
+        List<String> incompatibleList = new ArrayList<>();
+        List<String> ignoredList     = new ArrayList<>();
 
         for (Map.Entry<String, String> entry : mappings.entrySet()) {
             String pluginName = entry.getKey();
             String slug = entry.getValue();
 
             if (config.getIgnoredPlugins().contains(pluginName) || slug == null || slug.isBlank()) {
-                plugin.getLogger().info("[CanWe] ~ " + pluginName + " → ignored (no Modrinth mapping)");
-                ignored++;
+                ignoredList.add(pluginName);
                 continue;
             }
 
             try {
-                boolean available = client.hasVersionForTarget(slug, targetVersion);
-                if (available) {
-                    plugin.getLogger().info("[CanWe] + " + pluginName + " (" + slug + ") → compatible with " + targetVersion);
-                    compatible++;
+                if (client.hasVersionForTarget(slug, targetVersion)) {
+                    compatibleList.add(pluginName);
                 } else {
-                    plugin.getLogger().warning("[CanWe] ! " + pluginName + " (" + slug + ") → NO version for " + targetVersion + " on Modrinth");
-                    incompatible++;
+                    incompatibleList.add(pluginName);
                 }
             } catch (Exception e) {
-                plugin.getLogger().log(Level.WARNING,
-                        "[CanWe] ? " + pluginName + " → check failed: " + e.getMessage());
-                ignored++;
+                plugin.getLogger().log(Level.WARNING, "[CanWe] Check failed for \"" + pluginName + "\": " + e.getMessage());
+                ignoredList.add(pluginName);
             }
         }
 
         plugin.getLogger().info("[CanWe] Check complete — "
-                + compatible + " compatible, "
-                + incompatible + " incompatible, "
-                + ignored + " ignored.");
+                + compatibleList.size() + " compatible, "
+                + incompatibleList.size() + " incompatible, "
+                + ignoredList.size() + " ignored.");
+        plugin.getLogger().info("[CanWe] Ignored     : " + ignoredList);
+        plugin.getLogger().info("[CanWe] Compatible  : " + compatibleList);
 
-        if (incompatible > 0) {
-            plugin.getLogger().warning("[CanWe] " + incompatible + " plugin(s) are not yet available for " + targetVersion
-                    + ". Check the logs above for details.");
+        if (!incompatibleList.isEmpty()) {
+            plugin.getLogger().warning("[CanWe] Incompatible: " + incompatibleList);
         }
     }
 }
